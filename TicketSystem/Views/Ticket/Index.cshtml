@@ -1,0 +1,93 @@
+﻿@{
+	ViewBag.Title = "Projektübersicht";
+}
+@model List<Project>
+
+<h1>Projektübersicht
+    <a style="float:right" class="btn btn-secondary" asp-controller="Home" asp-action="Index">
+        <i class="bi bi-arrow-left"></i> Zurück
+    </a>
+</h1>
+
+@if (TempData["UserError"] != null)
+{
+    <div class="alert alert-danger">@TempData["UserError"]</div>
+}
+@if(TempData["ProjectCloedError"] != null) 
+{
+    <div class="alert alert-danger">@TempData["ProjectCloedError"]</div>
+}
+
+
+<table class="table table-card">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Titel</th>
+            <th>Beschreibung</th>
+            <th>
+                <i class="bi bi-check-lg text-success"> </i>Tickets
+            </th>
+            <th>
+                <i class="bi bi-x-lg text-danger"> </i>Tickets
+            </th>
+            <th></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ele in Model)
+        {
+            <tr>
+                <td>@ele.Id</td>
+                <td>
+                    <strong>@ele.Title</strong><br />
+                </td>
+                <td>@ele.DescriptionPreview</td>
+                <td class="text-center">@ele.OpenTickets</td>
+                <td class="text-center">@ele.ClosedTickets</td>
+                <td>
+                    <a class="btn btn-secondary btn-sm" asp-action="ProjectDetails" asp-route-id="@ele.Id">Details</a>
+                    <a class="btn btn-primary btn-sm" asp-action="AddTicket" asp-route-projectId="@ele.Id">Ticket anlegen</a>
+                    @if (ele.ProjectClosed == false)
+                    {
+                        <a asp-controller="Projects" asp-action="CloseProject" asp-route-id="@ele.Id" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Sind Sie sich sicher?');">
+                            <i class="bi bi-x-lg"></i> Projekt schließen
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-x-lg"></i> Projekt geschlossen
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@* <table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Titel</th>
+            <th>Beschreibung</th>
+            <th>Details</th>
+            <th>ticket anlegen</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ele in Model)
+        {
+            <tr>
+                <td>@ele.Id</td>
+                <td>@ele.Title</td>
+                <td>@ele.DescriptionPreview</td>
+                <td><a class="btn btn-secondary" asp-action="ProjectDetails" asp-route-id="@ele.Id">Details</a></td>
+                <td><a class="btn btn-primary" asp-action="AddTicket" asp-route-projectId="@ele.Id">Ticket anlegen</a></td>
+            </tr>
+        }
+    </tbody>
+</table> *@

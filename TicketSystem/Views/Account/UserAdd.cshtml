@@ -1,0 +1,36 @@
+﻿@{
+	ViewBag.Title = "Register";
+}
+@model UserCreateModel
+
+<h1>
+	Benutzer anlegen
+	<a style="float:right" class="btn btn-secondary" asp-action="UserList">
+		<i class="bi bi-arrow-left"></i> Zurück
+	</a>
+</h1>
+<form asp-controller="Account" asp-action="UserAdd" method="post">
+
+	<label asp-for="Name" class="form-label"></label>
+	<input asp-for="Name" class="form-control" />
+	<span asp-validation-for="Name"></span>
+
+	<label asp-for="Password" class="form-label">Passwort</label>
+	<input asp-for="Password" type="password" class="form-control" />
+	<span asp-validation-for="Password"></span>
+
+	<label class="form-label" asp-for="Role">Rolle</label>
+	<select class="form-select" asp-for="Role" asp-items="@ViewBag.Roles">
+		<option value="Admin">Admin</option>
+		<option value="Developer">Developer</option>
+		<option value="Tester">Tester</option>
+	</select>
+
+
+	<div class="text-danger" asp-validation-summary="ModelOnly"></div>
+
+	<br />
+	<button class="btn btn-success" type="submit">
+		<i class="bi bi-plus-lg"></i>Anlegen
+	</button>
+</form>

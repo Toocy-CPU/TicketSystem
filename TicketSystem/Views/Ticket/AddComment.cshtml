@@ -1,0 +1,27 @@
+﻿@{
+	ViewBag.Title = "AddComment";
+}
+@model Comment
+<h1>Kommentar erstellen
+	<a style="float:right" class="btn btn-secondary" asp-route-id="@Model.TicketId" asp-action="TicketDetails">
+		<i class="bi bi-arrow-left"></i> Zurück
+	</a>
+</h1>
+<form asp-controller="Ticket" asp-action="AddComment" method="post">
+
+	<input type="hidden" asp-for="TicketId" />
+	<input type="hidden" asp-for="IdentityUserId" />
+
+	<label asp-for="Title" class="form-label">Titel</label>
+	<input asp-for="Title" class="form-control" />
+	<span asp-validation-for="Title"></span>
+
+	<label asp-for="Content" class="form-label">Text</label>
+	<textarea asp-for="Content" rows="10" placeholder="Kommentar..." class="form-control"></textarea>
+	<span asp-validation-for="Content"></span>
+	<div class="text-danger" asp-validation-summary="ModelOnly"></div>  @* Wenn das ticket geschlossen ist .. noch nicht getestet *@
+	<br />
+	<button class="btn btn-success" type="submit">
+		<i class="bi bi-plus-lg"></i> Anlegen
+		</button>
+</form>

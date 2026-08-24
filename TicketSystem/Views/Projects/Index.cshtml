@@ -1,0 +1,66 @@
+﻿@model IEnumerable<TicketSystem.Models.Project>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>
+    Projektverwaltung
+    <a style="float:right" class="btn btn-secondary" asp-controller="Home" asp-action="Admin">
+        <i class="bi bi-arrow-left"></i> Zurück
+    </a>
+</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="bi bi-plus-lg"></i> Projekt hinzufügen
+    </a>
+</p>
+<table class="table table-card">
+    <thead>
+        <tr>
+            <th>
+               Titel
+            </th>
+            <th>
+                Beschreibung
+            </th>
+            <th>
+               Erstellt am:
+            </th>
+            <th>
+               Frist:
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DescriptionPreview)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeadLine)
+            </td>
+            <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil"></i> Bearbeiten
+                    </a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                        <i class="bi bi-info-circle"></i> Details
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash"></i> Löschen
+                    </a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

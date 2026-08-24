@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "Upload File";
+}
+@model Ticket
+
+<h2>Datei hochladen</h2>
+
+    <form asp-action="Index" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+        <input type="file" name="files" multiple />
+        <button type="submit">Hochladen</button>
+    </form>
+
+
+@if (ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+    @if (ViewBag.Filenames != null)
+    {
+        foreach (var filename in (List<string>)ViewBag.Filenames)
+        {
+            <a asp-action="Download" asp-route-filename="@filename">Jetzt herunterladen: @filename</a>
+            <br />
+        }
+    }
+}

@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNetCore.Identity
+@{
+	ViewBag.Title = "Persönlicher Bereich";
+    var viewModelMade = ViewBag.MadeList as List<Ticket>;
+    var viewModelWorking = ViewBag.WorkingList as List<Ticket>;
+}
+@model IdentityUser
+
+<h1>Persönlicher Bereich von @Model.UserName
+    <a style="float:right" class="btn btn-secondary" asp-controller="Home" asp-action="Index">
+        <i class="bi bi-arrow-left"></i> Zurück
+    </a>
+</h1>
+<a asp-controller="Account"
+   asp-action="ChangeUsername"
+   asp-route-id="@Model.Id"
+   class="btn btn-secondary mt-3">
+    <i class="bi bi-person"></i> Benutzername ändern
+</a>
+
+<a class="btn btn-secondary mt-3" asp-controller="Account" asp-action="ChangePassword">
+    <i class="bi bi-key"></i> Passwort ändern
+</a>
+<br />
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Eigene Tickets</h5>
+
+            @if (viewModelMade == null || viewModelMade.Count() < 1)
+            {
+                <p>Noch keine Tickets erstellt</p>
+            }
+            else
+            {
+                <div style="max-height: 596px; overflow-y: auto;">
+
+                @foreach (var ele in viewModelMade)
+                {
+                    <div class="card my-2">
+                        <a asp-controller="Ticket" asp-action="TicketDetails" asp-route-id="@ele.Id" class="stretched-link"></a>
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-0">@ele.Title</h5>
+                                <small class="text-muted">Projekt: @ele.Project?.Title</small>
+                            </div>
+                            @if (ele.TicketClosed == true)
+                            {
+                                <div>
+                                    <button class="btn btn-outline-danger">Ticket geschlossen</button>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-body">
+                            @ele.DescriptionPreview
+                        </div>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <div class="col-md-4">
+                                <strong>Bearbeitet von:</strong> @ele.Bearbeiter?.UserName
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Erstellt am:</strong> @ele.CreatedAt
+                            </div>
+                        </div>
+                    </div>
+                }
+                </div>
+            }
+        </div>
+
+
+        <div class="col-md-6">
+            <h5>Tickets zum Bearbeiten</h5>
+          
+            @if (viewModelWorking == null || viewModelWorking.Count() < 1)
+            {
+                <p>Keine Tickets zum Bearbeiten</p>
+            }
+            else
+            {
+                <div style="max-height: 596px; overflow-y: auto;">
+
+                @foreach (var ele in viewModelWorking)
+                {
+                    <div class="card my-2">
+                        <a asp-controller="Ticket" asp-action="TicketDetails" asp-route-id="@ele.Id" class="stretched-link"></a>
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-0">@ele.Title</h5>
+                                <small class="text-muted">Projekt: @ele.Project?.Title</small>
+                            </div>
+                            @if (ele.TicketClosed == true)
+                            {
+                                <div>
+                                    <button class="btn btn-outline-danger">Ticket geschlossen</button>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-body">
+                            @ele.DescriptionPreview
+                        </div>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <div class="col-md-4">
+                                <strong>Erstellt von:</strong> @ele.IdentityUser?.UserName
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Erstellt am:</strong> @ele.CreatedAt
+                            </div>
+                        </div>
+                    </div>
+                }
+                </div>
+            }
+            </div>
+    </div>
+</div>

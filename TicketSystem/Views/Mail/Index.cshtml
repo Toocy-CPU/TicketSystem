@@ -1,0 +1,92 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using TicketSystem.ViewModels
+@{
+    ViewBag.Title = "Mail start";
+}
+@model List<ChatPreview>
+
+<h1>Mailseite
+    <a style="float:right" class="btn btn-secondary" asp-controller="Home" asp-action="Index">
+        <i class="bi bi-arrow-left"></i> Zurück
+    </a>
+</h1>
+
+@* @foreach(var ele in Model)
+{
+    <div class="card mb-3">
+        <div style="position:relative;">
+            <a asp-action="Chat" asp-route-GEtId="@ele.User.Id" class="stretched-link"></a>
+            <div class="card-header">
+                @ele.User.UserName
+            </div>
+            <div class="card-body">
+                @ele.LastMail.TextPreview
+            </div>
+        </div>
+        
+        <div class="card-footer">           
+            Gesendet am: @ele.LastMail.SendDate
+            <a asp-action="DeleteChat" class="btn btn-danger" asp-route-getId="@ele.User.Id" style="float:right"
+               onclick="return confirm('Chat löschen?');">
+                <i class="bi bi-trash"></i> Chat löschen
+            </a>
+        </div>
+
+    </div>
+
+} *@
+@foreach (var ele in Model)
+{
+    <div class="card chat-item shadow-sm mb-2 border-0 rounded-3">
+        <div class="d-flex align-items-center p-3">
+
+            <!-- Avatar/Profilbild (Platzhalter) -->
+            <div class="flex-shrink-0 me-3">
+                <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center"
+                     style="width: 50px; height: 50px; font-weight: bold;">
+                    @ele.User.UserName.Substring(0, 1).ToUpper()
+                </div>
+            </div>
+
+            <!-- Chat-Info mit gestrecktem Link -->
+            <div class="flex-grow-1 position-relative">
+                <a asp-action="Chat" asp-route-GEtId="@ele.User.Id" class="stretched-link"></a>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-1 fw-semibold">@ele.User.UserName</h6>
+                    <small class="text-muted">@ele.LastMail.SendDate.ToString("g")</small>
+                </div>
+                <p class="mb-0 text-muted text-truncate" style="max-width: 100%;">
+                    @ele.LastMail.TextPreview
+                </p>
+            </div>
+
+            <!-- Löschen-Button --> 
+            <div class="ms-3">
+                <a asp-action="DeleteChat"
+                   asp-route-getId="@ele.User.Id"
+                   class="btn btn-sm btn-outline-danger"
+                   onclick="return confirm('Chat löschen?');"
+                   title="Chat löschen">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </div>
+
+        </div>
+    </div>
+}
+
+
+@if (ViewBag.SelectUsers != null && ((SelectList)ViewBag.SelectUsers).Any())
+{
+    <h5>Neuer Chat: </h5>
+    <form asp-controller="Mail" asp-action="Chat" method="get">
+
+        <label class="form-label">Empfänger:</label>
+        <select name="GEtId" class="form-control" asp-items="@ViewBag.SelectUsers" style="width: 1000px;">
+        </select> <br />
+
+        <button class="btn btn-info" type="submit">
+            <i class="bi bi-chat"></i> Chat eröffnen
+        </button>
+    </form>
+}

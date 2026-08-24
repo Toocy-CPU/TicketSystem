@@ -1,0 +1,278 @@
+﻿@{
+    ViewBag.Title = "ticketdetail";
+}
+@model Ticket
+
+<h1>
+    Ticketdetails
+    <a style="float:right" class="btn btn-warning" asp-action="TicketList">
+        <i class="bi bi-arrow-left"></i> Ticket Übersicht
+    </a>
+</h1>
+@if (TempData["BlockClosing"] != null)
+{
+    <div class="alert alert-danger">@Html.Raw(TempData["BlockClosing"].ToString().Replace("/*/", "<br />"))</div>
+}
+@if (TempData["BlockSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData["BlockSuccess"]</div>
+}
+@if (TempData["BlockError"] != null)
+{
+    <div class="alert alert-danger">@TempData["BlockError"]</div>
+}
+
+@if(TempData["UploadSuccess"] != null)
+{
+    <div class="alert alert-success">@Html.Raw(TempData["UploadSuccess"].ToString().Replace("/*/","<br />"))</div>
+}
+@if (TempData["UploadFailed"] != null)
+{
+    <div class="alert alert-danger">@Html.Raw(TempData["UploadFailed"].ToString().Replace("/*/", "<br />"))</div>
+}
+@if (TempData["UploadSizeError"] != null)
+{
+    <div class="alert alert-danger">@Html.Raw(TempData["UploadSizeError"].ToString().Replace("/*/", "<br />"))</div>
+}
+@if(TempData["CountError"] != null)
+{
+    <div class="alert alert-danger">@TempData["CountError"]</div>
+}
+@if (TempData["UserError"] != null)
+{
+    <div class="alert alert-danger">@TempData["UserError"]</div>
+}
+@if (TempData["ClosedError"] != null)
+{
+    <div class="alert alert-danger">@TempData["ClosedError"]</div>
+}
+@if (TempData["FileDeleted"] != null)
+{
+    <div class="alert alert-danger">@TempData["FileDeleted"]</div>
+}
+<div class="card my-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-0">@Model.Title</h5>
+            <small class="text-muted">Projekt: @Model.Project?.Title</small>
+        </div>
+        <div>
+            @if(Model.TicketClosed == false) 
+            {
+                <a asp-action="AddComment" asp-route-ticketId="@Model.Id" class="btn btn-sm btn-primary">
+                    <i class="bi bi-chat-dots"></i> Kommentar
+                </a>
+                <a asp-action="EditTicket" asp-route-id="@Model.Id" class="btn btn-sm btn-success">
+                    <i class="bi bi-pencil"></i> Bearbeiten
+                </a>
+                <a asp-action="CloseTicket" asp-route-id="@Model.Id" class="btn btn-sm btn-danger"
+                onclick="return confirm('Sind Sie sich sicher?');">
+                    <i class="bi bi-x-lg"></i> Ticket schließen
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-x-lg"></i> Ticket geschlossen
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="card-body" style="height: 150px; overflow-y: auto;">
+        <p>@Model.Description</p>
+    </div>
+
+    <div class="card-footer">
+        <div class="row text-muted small">
+            <div class="col-md-4">
+                <strong>Erstellt von:</strong> @Model.IdentityUser?.UserName               
+            </div>
+            <div class="col-md-4">
+                <strong>Bearbeitet von:</strong> @(Model.Bearbeiter?.UserName ?? "-")
+            </div>
+            <div class="col-md-4">
+                <strong>Geschlossen von:</strong> @(Model.Closer?.UserName ?? "-")
+            </div>
+            <div class="col-md-4">
+                <strong>Erstellungsdatum:</strong> @Model.CreatedAt.ToString("g")
+            </div>
+            <div class="col-md-4">
+                <strong>Übergabedatum:</strong> @(Model.HandeledAt == default ? "-" : Model.HandeledAt.ToString("g"))
+            </div>
+            <div class="col-md-4">
+                <strong>Schließungsdatum:</strong> @(Model.ClosedAt == default ? "-" : Model.ClosedAt.ToString("g"))
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-6">
+            @if (ViewBag.BlockingList.Count > 0)
+            {
+                <h5 class="d-inline"> Wird geblockt von: </h5>
+
+            }
+            @if (ViewBag.BlockingList != null)
+            {
+                foreach (var ele in ViewBag.BlockingList)
+                {
+                    <a asp-action="TicketDetails" asp-route-id="@ele.Id" class="btn btn-sm btn-success my-1">
+                        @ele.Title <i class="bi bi-check-lg"></i>
+                    </a>
+                }
+            }
+        </div>
+        <div class="col-md-6">
+            @if (Model.BlockedTickets.Count > 0)
+            {
+                <h5 class="d-inline"> Blockiert folgende: </h5>
+
+            }
+            @if (Model.BlockedTickets != null)
+            {
+                @foreach (var ele in Model.BlockedTickets)
+                {
+                    <a asp-action="UnblockTicket" asp-route-id="@ele.Id" class="btn btn-sm btn-danger my-1"
+                    onclick="return confirm('Ticket von der Blockliste entfernen?');">
+                        @ele.BlockedTicket.Title <i class="bi bi-x-lg"></i>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+</div>
+<p></p>
+
+@if (!Model.TicketClosed)
+{
+    <div class="container mb-3">
+        <div class="row">
+            <!-- Upload-Formular -->
+            <div class="col-md-6">
+                <form asp-controller="File" asp-action="Index" asp-route-id="@Model.Id"
+                method="post" enctype="multipart/form-data" class="d-flex align-items-stretch gap-2">
+
+                    <input type="file" name="files" multiple
+                    class="form-control" style="height: 100%;" />
+
+                    <button class="btn btn-primary" type="submit" style="white-space: nowrap;">
+                        <i class="bi bi-cloud-upload"></i> Hochladen
+                    </button>
+                </form>
+            </div>
+
+            <!-- ticket blocken formular -->
+            @if (ViewBag.ticketlist != null && ((SelectList)ViewBag.ticketlist).Any())
+            {
+                <div class="col-md-6">
+                    <form asp-action="BlockTicket" asp-route-blockId="@Model.Id"
+                    method="post" class="d-flex align-items-stretch gap-2">
+
+                        <select class="form-select" name="getBlockedId" asp-items="@ViewBag.ticketlist">
+                        </select>
+
+                        <button class="btn btn-primary" type="submit" style="white-space: nowrap;">
+                            <i class="bi bi-lock"></i> Ticket blocken
+                        </button>
+                    </form>
+                </div>
+            }
+
+        </div>
+    </div>  
+}
+
+
+
+
+<div class="container">
+    <div class="row">
+        <!-- Linke Spalte: UploadFiles -->
+        <div class="col-md-6">
+            <h5>Dateien</h5>
+            @if (Model.UploadFiles != null)
+            {
+                @foreach (var ele in Model.UploadFiles)
+                {
+                    <div class="card mb-3">                  
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>
+                                @ele.FileNamePrev
+                            </div>
+                            <div>
+                                <a asp-controller="File" asp-action="Download" asp-route-fileId="@ele.Id" class="btn btn-success" title="Download">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                                <a asp-controller="File" asp-action="RemoveFile" asp-route-fileId="@ele.Id" class="btn btn-danger"
+                                title="Datei löschen" onclick="return confirm('Sind Sie sich sicher?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            @if (ele.Type.EndsWith("jpg"))
+                            {
+                                <img src="/files/@(Model.Project.Title)/@(Model.Title)/@(ele.Filename)"
+                                class="img-fluid" style="height:100px" alt="Bildvorschau"  />
+                            }
+                            else if (ele.Type.EndsWith("txt"))
+                            {
+                                <img src="/img/textImg.png" class="img-fluid" style="height:100px" />
+                            }
+                            else if (ele.Type.EndsWith("docx") || ele.Type.EndsWith("odt"))
+                            {
+                                <img src="/img/wordImg.jpg" class="img-fluid" style="height:100px" />
+                            }
+                            else if (ele.Type.EndsWith("xlsx"))
+                            {
+                                <img src="/img/excelImg.png" class="img-fluid" style="height:100px" />
+                            }
+                            else if (ele.Type.EndsWith("pdf"))
+                            {
+                                <img src="/img/pdfImg.webp" class="img-fluid" style="height:100px" />
+                            }
+                            else
+                            {
+                                <img src="/img/dafaultImg.png" class="img-fluid" style="height:100px" />
+                            }
+                        </div>
+                        <div class="card-footer">
+                            @ele.IdentityUser
+                            @ele.UploadedAt
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Rechte Spalte: Comments -->
+        <div class="col-md-6">
+            <h5>Kommentare</h5>
+            @if (Model.Comments != null) @* vll auch falsche prüfung *@
+            {
+                foreach (var ele in Model.Comments)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            @ele.Title
+                        </div>
+                        <div class="card-body">
+                            @ele.Content
+                        </div>
+                        <div class="card-footer">
+                            @ele.IdentityUser?.UserName
+          
+                            @ele.CreatedAt.ToString("g")
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,74 @@
+﻿@{
+	ViewBag.Title = "ProjectDetails";
+}
+@model Project
+
+<h1>
+    Projektdetails 
+    <a style="float:right" class="btn btn-secondary" asp-controller="Ticket" asp-action="Index">
+        <i class="bi bi-arrow-left"></i> Zurück
+    </a>
+</h1>
+
+<div class="card my-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-0">@Model.Title</h5>
+            <small class="text-muted">Id: @Model.Id.ToString("g")</small>
+        </div>
+        <div>
+        </div>
+    </div>
+
+    <div class="card-body" style="height: 300px; overflow-y: auto;">
+        <p>@Model.Description</p>
+    </div>
+
+    <div class="card-footer">
+        <div class="row text-muted small">
+            <div class="col-md-6">
+                <strong>Erstellt am:</strong> @Model.CreatedAt.ToString("g")
+            </div>
+            <div class="col-md-6">
+                <strong>Deadline:</strong> @Model.DeadLine.ToString("g")
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Tickets != null)
+{
+    <h2>Tickets</h2>
+
+    foreach (var ele in Model.Tickets)
+    {
+        <div class="card my-2">
+            <a asp-action="TicketDetails" asp-route-id="@ele.Id" class="stretched-link"></a>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">@ele.Title</h5>
+                    <small class="text-muted">Id: @ele.Id</small>
+                </div>
+                @if (ele.TicketClosed == true)
+                {
+                    <div>
+                        <button class="btn btn-outline-danger btn-sm">Ticket geschlossen</button>
+                    </div>
+                }
+            </div>
+            <div class="card-body">
+                @ele.DescriptionPreview
+            </div>
+            <div class="card-footer">
+                <div class="row text-muted small">
+                    <div class="col-md-6">
+                        <strong>Erstellt von:</strong> @ele.IdentityUser?.UserName
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Erstellt am:</strong> @ele.CreatedAt.ToString("g")
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

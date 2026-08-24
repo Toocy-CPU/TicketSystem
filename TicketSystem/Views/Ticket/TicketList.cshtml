@@ -1,0 +1,68 @@
+﻿@using TicketSystem.ViewModels
+@{
+    ViewBag.Title = "ticketlist";
+}
+@model FilterViewModel
+
+<h1>Ticketübersicht
+    <a style="float:right" class="btn btn-secondary" asp-controller="Home" asp-action="Index">
+        <i class="bi bi-arrow-left"></i> Zurück
+    </a>
+</h1>
+
+<form asp-controller="Ticket" asp-action="TicketListFiltered" method="get" class="d-flex align-items-stretch gap-2">
+    <select name="ProjectId" asp-items="@ViewBag.Projects" class="form-select w-50"
+            onchange="this.form.submit()">
+        <option value="-1">Alle Projekte</option>
+    </select>
+    <select name="CreaterId" asp-items="@ViewBag.UserCreater" class="form-select w-50"
+            onchange="this.form.submit()">
+        <option value="-1">Alle Ersteller</option>
+    </select>
+
+
+    <select asp-for="BearbeiterId" asp-items="Model.CategoryOptions" class="form-select w-50" 
+            onchange="this.form.submit()">
+
+    </select>
+
+    <a asp-controller="Ticket" asp-action="TicketList" class="btn btn-primary d-flex align-items-center gap-2 px-3">
+        <i class="bi bi-arrow-counterclockwise"></i> Zurücksetzen
+    </a>
+</form>
+
+@if (Model != null)
+{
+    <div style="max-height: 695px; overflow-y: auto;">
+    @foreach (var ele in Model.Liste1)
+    {
+        <div class="card my-2">
+            <a asp-action="TicketDetails" asp-route-id="@ele.Id" class="stretched-link"></a>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">@ele.Title</h5>
+                    <small class="text-muted">Projekt: @ele.Project?.Title</small>
+                </div>
+                @if(ele.TicketClosed == true)
+                {
+                    <div>
+                        <button class="btn btn-outline-danger">Ticket geschlossen</button>
+                    </div>
+                }               
+            </div>
+            <div class="card-body">
+                @ele.DescriptionPreview
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <div class="col-md-4">
+                    <strong>Erstellt von:</strong> @ele.IdentityUser?.UserName
+                </div>
+                <div class="col-md-4">
+                    <strong>Erstellt am:</strong> @ele.CreatedAt
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+}
+

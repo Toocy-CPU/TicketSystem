@@ -1,0 +1,72 @@
+﻿@using TicketSystem.ViewModels
+@{
+    ViewData["Title"] = "Home Page";
+}
+@model Statistic
+<div class="text-center">
+    <h1 class="display-4">Ticketsystem FPA</h1>
+</div>
+
+<div class="row my-4">
+    <div class="col-md-6">
+        <canvas id="ticketChart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="projectChart"></canvas>
+    </div>
+</div>
+
+
+@section Admin {
+@if (User?.Identity?.IsAuthenticated ?? false)
+    {
+        if(User.IsInRole("Admin"))
+        {
+            <a asp-action="Admin" class="btn btn-warning" style="float:right;margin-top:10px">
+                <i class="bi bi-people"></i> Admin Seite
+            </a>
+        }
+    }
+
+}
+
+@section Scripts {
+    <script>
+        const openTickets = @Model.OpenTickets;
+        const closedTickets = @Model.ClosedTickets;
+        const openProjects = @Model.OpenProjects;
+        const closedProjects = @Model.ClosedProjects;
+
+        new Chart(document.getElementById('ticketChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Offen', 'Geschlossen'],
+                datasets: [{
+                    data: [openTickets, closedTickets],
+                    backgroundColor: ['#ffc107', '#28a745']
+                }]
+            },
+            options: {
+                plugins: {
+                    title: { display: true, text: 'Tickets' }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('projectChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Offen', 'Geschlossen'],
+                datasets: [{
+                    data: [openProjects, closedProjects],
+                    backgroundColor: ['#17a2b8', '#6c757d']
+                }]
+            },
+            options: {
+                plugins: {
+                    title: { display: true, text: 'Projekte' }
+                }
+            }
+        });
+    </script>
+}

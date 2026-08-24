@@ -1,0 +1,92 @@
+﻿@using TicketSystem.ViewModels
+@{
+    ViewBag.Title = "Personalsite";
+    var viewModel = ViewBag.ViewModel as MailViewModel;
+}
+@model Mail
+<h1>Mail Seite</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Empfangen</h5>
+            @if (viewModel.GotMails.Count < 1)
+            {
+                <p>Noch keine Nachrichten erhalten</p>
+            }
+            @foreach (var ele in viewModel.GotMails)
+            {
+                if (ele.AbsenderAnzeigen != false)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            Sender: @ele.Sender
+                        </div>
+                        <div class="card-body">
+                            @ele.Text
+                        </div>
+                        <div class="card-footer">
+                            Gesendet am: @ele.SendDate
+                        </div>
+                        <a asp-action="CloseMail" asp-route-id="@ele.Id" asp-route-empfangen="true" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Löschen
+                        </a>
+                        </div>
+                }
+            }
+        </div>
+
+
+        <div class="col-md-6">
+            <h5>Gesendet</h5>
+            @if (viewModel.SendMails.Count < 1)
+            {
+                <p>Noch keine Nachrichten versendet</p>
+            }
+            @foreach (var ele in viewModel.SendMails)
+            {
+                if (ele.EmpfangerAnzeigen != false)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            Empfänger: @ele.Empfanger
+                        </div>
+                        <div class="card-body">
+                            @ele.Text
+                        </div>
+                        <div class="card-footer">
+                            Gesendet am: @ele.SendDate
+                        </div>
+                        <a asp-action="CloseMail" asp-route-id="@ele.Id" asp-route-empfangen="false" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Löschen
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<h5>Neue Nachricht Schreiben: </h5>
+<form asp-controller="Mail" asp-action="AddMail" method="post">
+
+    <input type="hidden" asp-for="SenderId"/>
+
+    @* <label asp-for="Text" class="form-label"></label> *@
+    <textarea asp-for="Text" rows="7" style="width: 1000px;resize:none;" placeholder="Nachricht eingeben..."></textarea>
+    <br />
+    <span asp-validation-for="Text" class="text-danger d-block"></span>
+    <br />
+
+    <label class="form-label">Empfänger:</label>
+    <select asp-for="EmpfangerId" class="form-control" style="width: 1000px;">
+        @foreach (var user in viewModel.Users)
+        {
+            <option value="@user.Id">@user.UserName</option>
+        }
+    </select> <br />
+
+    <button class="btn btn-success" type="submit">
+        <i class="bi bi-send"></i> Senden
+    </button>
+</form>

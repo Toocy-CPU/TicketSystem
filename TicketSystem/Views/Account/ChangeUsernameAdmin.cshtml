@@ -1,0 +1,29 @@
+﻿@model ChangeUsernameViewModel
+@{
+    ViewData["Title"] = "Benutzernamen ändern";
+
+    // Prüfen, ob das Formular schon einmal abgeschickt wurde
+    var submitted = ViewData.ModelState["NewUsername"]?.RawValue != null;
+}
+<h2>Benutzernamen ändern
+    <a style="float:right" class="btn btn-secondary" asp-action="UserList">
+        <i class="bi bi-arrow-left"></i> Zurück
+    </a>
+</h2>
+
+@if (TempData["User"] != null)
+{
+    <div class="alert alert-info">@TempData["User"]</div>
+}
+
+<form asp-action="ChangeUsernameAdmin" method="post">
+    <div class="form-group">
+        <label asp-for="NewUsername"></label>
+        <input asp-for="NewUsername" class="form-control" />
+        <span asp-validation-for="NewUsername" class="text-danger"></span>
+    </div>
+    <input type="hidden" value="@Model.UserId" name="UserId"/>
+    <button type="submit" class="btn btn-primary mt-2">
+        <i class="bi bi-person-badge"></i> Benutzernamen ändern
+    </button>
+</form>

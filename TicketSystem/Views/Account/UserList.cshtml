@@ -1,0 +1,94 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using TicketSystem.ViewModels
+@{
+	ViewBag.Title = "UserList";
+}
+@model List<UserWithRoles>
+
+
+<h1>
+    Benutzerverwaltung
+    <a style="float:right" class="btn btn-secondary" asp-controller="Home" asp-action="Admin">
+        <i class="bi bi-arrow-left"></i> Zurück
+    </a>
+</h1>
+@if (TempData["OpenBearbeiterFail"] != null)
+{
+    <div class="alert alert-danger">@TempData["OpenBearbeiterFail"]</div>
+}
+@if (TempData["OpenUploadFail"] != null)
+{
+    <div class="alert alert-danger">@TempData["OpenUploadFail"]</div>
+}
+@if (TempData["OpenMailFail"] != null)
+{
+    <div class="alert alert-danger">@TempData["OpenMailFail"]</div>
+}
+@if (TempData["OpenTicketFail"] != null)
+{
+    <div class="alert alert-danger">@TempData["OpenTicketFail"]</div>
+}
+@if (TempData["OpenCommentFail"] != null)
+{
+    <div class="alert alert-danger">@TempData["OpenCommentFail"]</div>
+}
+@if (TempData["ChangeRoleSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData["ChangeRoleSuccess"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<p>
+<a asp-action="UserAdd" class="btn btn-success">
+    <i class="bi bi-plus-lg"></i> Benutzer hinzufügen
+</a>
+</p>
+
+<table class="table table-card">
+    <thead>
+        <tr>
+            <th>Benutzername</th>
+            <th>Rolle</th>
+            <th class="text-end">Benutzernamen ändern</th>
+            <th class="text-end">Password ändern</th>
+            <th class="text-end">Rolle ändern</th>
+            <th class="text-end">Benutzer löschen</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ele in Model)
+        {
+            <tr>
+                <td>@ele.UserName</td>
+                <td>@ele.Roles.Last()</td>
+                <td class="text-end">
+                    <a class="btn btn-warning" asp-controller="Account" asp-action="ChangeUsernameAdmin" asp-route-id="@ele.UserId">
+                        <i class="bi bi-pencil"></i> Benutzername ändern
+                    </a>
+               </td>
+               <td class="text-end">
+                    <a class="btn btn-warning" asp-controller="Account" asp-action="ChangePasswordAdmin" asp-route-userId="@ele.UserId">
+                        <i class="bi bi-pencil"></i> Passwort ändern
+                    </a>
+               </td>
+                <td class="text-end">
+                    <a class="btn btn-warning" asp-controller="Account" asp-action="ChangeRole" asp-route-userId="@ele.UserId">
+                        <i class="bi bi-pencil"></i> Rolle ändern
+                    </a>
+               </td>
+                <td class="text-end">
+                    @* // bei zeit noch ändern *@
+                    <form asp-controller="Account" asp-action="DeleteUser" method="post" style="display:inline;">
+                        <input type="hidden" name="userId" value="@ele.UserId" />
+                        <button class="btn btn-danger" type="submit" onclick="return confirm('User wirklich löschen?');">
+                            <i class="bi bi-trash"></i> Benutzer löschen
+                        </button>
+                    </form>
+               </td>
+            </tr>
+        }
+    </tbody>
+</table>

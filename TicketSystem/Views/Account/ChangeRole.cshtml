@@ -1,0 +1,27 @@
+﻿@model TicketSystem.Models.ChangeRoleViewModel
+
+@{
+    ViewData["Title"] = "Rolle ändern";
+}
+
+<h2>Rolle ändern
+    <a style="float:right" class="btn btn-secondary" asp-action="UserList">
+        <i class="bi bi-arrow-left"></i> Zurück
+    </a>
+</h2>
+@if (TempData["User"] != null)
+{
+    <div class="alert alert-success">@TempData["User"]</div>
+}
+
+<form asp-action="ChangeRole" method="post">
+    <input type="hidden" asp-for="UserId" />
+    <div class="form-group">
+        <label asp-for="NewRole"></label>
+        <select asp-for="NewRole" class="form-control" asp-items="@(new SelectList(Model.Roles))"></select>
+        <span asp-validation-for="NewRole" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-warning mt-2">
+        <i class="bi bi-pencil"></i> Rolle ändern
+    </button>
+</form>

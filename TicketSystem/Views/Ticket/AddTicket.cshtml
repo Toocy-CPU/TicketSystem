@@ -1,0 +1,48 @@
+﻿@{
+	ViewBag.Title = "AddTicket";
+}
+@model Ticket
+<h1>
+	Ticket erstellen
+	<a style="float:right" class="btn btn-secondary" asp-controller="Ticket" asp-action="Index">
+		<i class="bi bi-arrow-left"></i> Zurück
+	</a>
+</h1>
+
+
+
+@if (TempData["UploadSizeError"] != null)
+{
+	<div class="alert alert-danger">@Html.Raw(TempData["UploadSizeError"].ToString().Replace("/*/", "<br />"))</div>
+}
+@if (TempData["CountError"] != null)
+{
+	<div class="alert alert-danger">@TempData["CountError"]</div>
+}
+<form asp-controller="Ticket" asp-action="AddTicket" method="post" enctype="multipart/form-data">
+
+	<input type="hidden" asp-for="ProjectId"/>
+	<input type="hidden" asp-for="IdentityUserId" />
+
+	<label asp-for="Title" class="form-label">Titel</label>
+	<input asp-for="Title" class="form-control" />
+	<span asp-validation-for="Title" class="text-danger"></span>
+	<br />
+	<label asp-for="Description" class="form-label">Text</label>
+	<textarea asp-for="Description" rows="10" placeholder="Ticketbeschreibung..." class="form-control" style="resize:none;"></textarea>
+	<span asp-validation-for="Description" class="text-danger"></span>
+	<br />
+	<label class="form-label" asp-for="BearbeiterId">Bearbeiter</label>
+	<select class="form-select" asp-for="BearbeiterId" asp-items="@ViewBag.Bearbeiter">
+		<option value="">Bearbeiter auswählen</option>
+	</select>
+	<br />
+	<label class="form-label" for="files">Dateien hochladen</label>
+	<input type="file" name="files" multiple class="form-control" style="height: 100%;" />
+	<br />
+
+	<button class="btn btn-success" type="submit">
+		<i class="bi bi-plus-lg"></i> Anlegen
+	</button>
+</form>
+
